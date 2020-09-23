@@ -6,7 +6,7 @@ This project has 2 main functions: createTable and fillTable
 See example-main.py for example of use
 Parameters are as follows:
 
-createTable(connectString, tableName, columnNames, columnTypes, addPK=false):
+`createTable(connectString, tableName, columnNames, columnTypes, addPK=false):
     connectString: string, inputted into psycopg2.connect()
     tableName: string, name of desired table
     columnNames: string[], each item will correspond to a new column, ordered
@@ -31,4 +31,4 @@ fillTable(connectString, tableName, jsonName, columnNames, columnTypes, executeA
                   increase this number when each item in a json is short in size
     fileLength: int, only used for progress display
                 optional, default is -1
-                if changed from -1, the step used to check file length will be skipped, instead using this value in the progress display
+                if changed from -1, the step used to check file length will be skipped, instead using this value in the progress display`
