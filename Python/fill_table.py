@@ -3,19 +3,17 @@ import json
 
 
 def fillTable(connectString, tableName, jsonName, columnNames, columnTypes, executeAfter=1000, fileLength=-1):
-    # Connect to 315 database
-    # Use an environment variable too access db password
+    # connect to database
     conn = psycopg2.connect(connectString)
     cur = conn.cursor()
     print("Connected to table: " + tableName)
-    # Read in json data
+    # Check file length for progress display
     file_length = 0
     if fileLength == -1:
         with open(jsonName, encoding='utf-8') as f:
             for line in f:
                 print('\r', "File loading: " + str(file_length), end='')
                 file_length += 1
-                # data.append(json.loads(line))
             print()
     else:
         file_length = fileLength
@@ -24,12 +22,11 @@ def fillTable(connectString, tableName, jsonName, columnNames, columnTypes, exec
         progress = 0
         execute_string = ""
         for LINE in f:
-            line = json.loads(LINE)
-            # Messy, but don't attempt to insert if a data field isn't read properly
+            line = json.loads(LINE) # convert individual line from json
             missing_data = False
             tableEntry = "insert into " + tableName + " values (\n"
             endLine = ",\n"
-
+            # extract values
             for i in range(len(columnNames)):
                 if columnNames[i] in line:
                     value = line[columnNames[i]]
@@ -93,23 +90,25 @@ def fillTable(connectString, tableName, jsonName, columnNames, columnTypes, exec
                     print("Data missing: " +
                           columnNames[i] + " in line " + str(progress))
 
-            # Only insert the values to test if they are all present
+            # Only insert the values to if all present
             if not missing_data:
                 # WARNING: Will halt operation if there is a duplicate PRIMARY_KEY
                 execute_string += tableEntry
 
+            # progress display: for peace of mind on long files
             if progress % (file_length // 1000) == 0:
                 percent_progress = int(100 * progress / file_length)
                 print('\r', "Progress: " + str(progress) + " lines out of " + str(file_length) +
                       " (" + str(percent_progress) + " %)", end='')
+            # only commits inserts every executeAfter line to speed up function
             if progress % executeAfter == 0:
                 # print(execute_string)
                 cur.execute(execute_string)
                 execute_string = ""
             progress += 1
         cur.execute(execute_string)
-    # Commit everything to the database
     print('\r', "Progress: " + str(file_length) +
           " lines out of " + str(file_length) + " (100 %)", end='')
+    # Commit everything to the database
     conn.commit()
     print("\nTable filled: " + tableName)
