@@ -1,12 +1,13 @@
 # json-sql-parser
-Takes JSON file as input and converts to sql query form, and uploads to database
-Must have psycopg2 installed in python to work
+#### Takes JSON file as input and converts to sql query form, and uploads to database
+#### Must have psycopg2 installed in python to work
 
 This project has 2 main functions: createTable and fillTable
 See example-main.py for example of use
 Parameters are as follows:
 
 createTable(connectString, tableName, columnNames, columnTypes, addPK=false):
+
     connectString: string, inputted into psycopg2.connect()
     tableName: string, name of desired table
     columnNames: string[], each item will correspond to a new column, ordered
@@ -19,6 +20,7 @@ createTable(connectString, tableName, columnNames, columnTypes, addPK=false):
 
 
 fillTable(connectString, tableName, jsonName, columnNames, columnTypes, executeAfter=1000, fileLength=-1):
+
     connectString: string, inputted into psycopg2.connect()
     tableName: string, name of table
     jsonName: string, file name of selected json
